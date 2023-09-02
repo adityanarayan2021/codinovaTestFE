@@ -62,6 +62,23 @@ const ExchangePage = () => {
       });
   }, [page, rowsPerPage, showTable]);
 
+  useEffect(() => {
+    fetch(`http://localhost:3000/exchanges/search?keyword=${searchQuery}&page=${page}&limit=${rowsPerPage+(page * rowsPerPage)}`,
+    { method: "GET",
+      mode: 'cors',
+       headers: {
+          'Access-Control-Allow-Origin':'*',
+         'Content-Type': 'application/json',}})
+      .then((response) => response.json())
+      .then((data) => {
+        setTotalCount(data?.currentData);
+        setExchangesData(data?.results);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }, [page, rowsPerPage, searchQuery]);
+
   
   const filteredData = exchangesData?.filter((exchange) =>
     exchange?.name?.toLowerCase()?.includes(searchQuery.toLowerCase())
